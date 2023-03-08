@@ -1,0 +1,37 @@
+﻿Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  SendEventsLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - Fn::ImportValue: dynamo-outbox-db-read-policy-arn
+        - Fn::ImportValue: dynamo-outbox-db-write-policy-arn
+        - Fn::ImportValue: dynamo-outbox-sec--kms-use-policy-arn
+
+  SendEventsLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-SendEventsLambda
+      Role: !GetAtt SendEventsLambdaRole.Arn
+      Handler: TBD
+      CodeUri: TBD
+
+Globals:
+  Function:
+    Runtime: dotnet6
+    MemorySize: 1024
+    Timeout: 50
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        DatabaseStackName: !Sub dynamo-outbox-db

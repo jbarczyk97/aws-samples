@@ -1,0 +1,74 @@
+﻿AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  DynamoDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-DynamoDbTable
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE         
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+        KMSMasterKeyId:
+          Fn::ImportValue: dynamo-outbox-kms-key-arn
+        SSEType: KMS
+  
+  AllowToReadDynamoDbPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Dynamo read policy for DynamoOutboxPattern
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:BatchGet*
+              - dynamodb:DescribeStream
+              - dynamodb:DescribeTable
+              - dynamodb:Get*
+              - dynamodb:Query
+            Resource:
+              - !GetAtt DynamoDbTable.Arn
+              - !Sub
+                - ${DynamoDbTable}/index/*
+                - DynamoDbTable: !GetAtt DynamoDbTable.Arn
+                  
+  AllowToWriteDynamoDbPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Dynamo write policy for DynamoOutboxPattern
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:BatchWrite*
+              - dynamodb:Delete*
+              - dynamodb:Update*
+              - dynamodb:PutItem
+            Resource:
+              - !GetAtt DynamoDbTable.Arn
+              - !Sub
+                - ${DynamoDbTable}/index/*
+                - DynamoDbTable: !GetAtt DynamoDbTable.Arn
+
+Outputs:
+  DynamoReadPolicyArn:
+    Description: AllowToReadDynamoDbPolicy
+    Value: !Ref AllowToReadDynamoDbPolicy
+    Export:
+      Name: !Sub ${AWS::StackName}-read-policy-arn
+  DynamoWritePolicyArn:
+    Description: AllowToWriteDynamoDbPolicy
+    Value: !Ref AllowToWriteDynamoDbPolicy
+    Export:
+      Name: !Sub ${AWS::StackName}-write-policy-arn

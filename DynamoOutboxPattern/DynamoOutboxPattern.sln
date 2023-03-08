@@ -1,8 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environment", "Environment", "{A831177A-C858-41F6-846D-610FEC0FEC22}"
+	ProjectSection(SolutionItems) = preProject
+		Environment\application.yaml = Environment\application.yaml
+		Environment\database.yaml = Environment\database.yaml
+		Environment\security.yaml = Environment\security.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{91A55456-E98C-4C05-89BE-7A30E5B88E9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamoOutboxPattern.Lambda", "DynamoOutboxPattern.Lambda\DynamoOutboxPattern.Lambda.csproj", "{37775B45-3220-4F63-AF1F-7450CBD867AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37775B45-3220-4F63-AF1F-7450CBD867AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37775B45-3220-4F63-AF1F-7450CBD867AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37775B45-3220-4F63-AF1F-7450CBD867AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37775B45-3220-4F63-AF1F-7450CBD867AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

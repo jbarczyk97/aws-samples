@@ -1,0 +1,48 @@
+﻿AWSTemplateFormatVersion: 2010-09-09
+
+
+Resources:
+  KmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: DynamoOutboxPattern KMS Key
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: !Sub ${AWS::StackName}-kms-key
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Ref AWS::AccountId
+            Action: kms:*
+            Resource: '*'
+
+  KmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${AWS::StackName}-kms-key
+      TargetKeyId: !GetAtt KmsKey.Arn
+  
+  AllowToUseKmsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Kms use policy for DynamoOutboxPattern configuration stack
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource: !GetAtt KmsKey.Arn
+
+Outputs:
+  KmsKeyArn:
+    Description: DynamoOutboxPattern KMS key ARN
+    Value: !GetAtt KmsKey.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-kms-key-arn
+  KmsUsePolicyArn:
+    Description: AllowToUseKmsPolicy
+    Value: !Ref AllowToUseKmsPolicy
+    Export:
+      Name: !Sub ${AWS::StackName}-kms-use-policy-arn
