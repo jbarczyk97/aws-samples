@@ -19,7 +19,7 @@ Resources:
       SSESpecification:
         SSEEnabled: true
         KMSMasterKeyId:
-          Fn::ImportValue: dynamo-outbox-kms-key-arn
+          Fn::ImportValue: dynamo-outbox-sec-kms-key-arn
         SSEType: KMS
   
   AllowToReadDynamoDbPolicy:

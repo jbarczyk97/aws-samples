@@ -1,7 +1,7 @@
 ﻿Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  SendEventsLambdaRole:
+  AddStoreLambdaRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -15,15 +15,15 @@ Resources:
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - Fn::ImportValue: dynamo-outbox-db-read-policy-arn
         - Fn::ImportValue: dynamo-outbox-db-write-policy-arn
-        - Fn::ImportValue: dynamo-outbox-sec--kms-use-policy-arn
+        - Fn::ImportValue: dynamo-outbox-sec-kms-use-policy-arn
 
-  SendEventsLambda:
+  AddStoreLambda:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-SendEventsLambda
-      Role: !GetAtt SendEventsLambdaRole.Arn
-      Handler: TBD
-      CodeUri: TBD
+      FunctionName: !Sub ${AWS::StackName}-AddStoreLambda
+      Role: !GetAtt AddStoreLambdaRole.Arn
+      Handler: DynamoOutboxPattern.Lambda::DynamoOutboxPattern.Lambda.Functions.AddStoreLambda::Run
+      CodeUri: ../DynamoOutboxPattern.Lambda
 
 Globals:
   Function:
